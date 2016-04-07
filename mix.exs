@@ -2,12 +2,16 @@ defmodule TempDir.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :tempdir,
-     version: "0.0.1",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps]
+    [
+      app: :tempdir,
+      version: "0.0.1",
+      elixir: "~> 1.2",
+      description: "Simple Elixir Library for creating self-cleaning tmp directories",
+      package: package,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps
+    ]
   end
 
   # Configuration for the OTP application
@@ -28,5 +32,13 @@ defmodule TempDir.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     []
+  end
+
+  defp package do
+    [
+      maintainers: ["Andrew Vy"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/andrewvy/tempdir"}
+    ]
   end
 end
