@@ -11,38 +11,30 @@ defmodule TempDir do
     defstruct path: "", files: []
   end
 
+  # ----------
   # Public API
+  # ----------
 
-  @doc """
-    Starts a new tmp process that creates its own tmp
-    directory.
-  """
+  @doc "Starts a new tmp process that creates its own tmp directory."
   def start_link(default \\ %{}) do
     GenServer.start_link(__MODULE__, default)
   end
 
-  @doc """
-    Manually terminates a tmp process and performs cleanup.
-  """
+  @doc "Manually terminates a tmp process and performs cleanup."
   def stop(pid), do: GenServer.stop(pid)
 
-  @doc """
-    Gets the tmp path for the process.
-  """
+  @doc "Gets the tmp path for the process."
   def get_path(pid), do: GenServer.call(pid, :path)
 
-  @doc """
-    Gets the tmp path for the process.
-  """
+  @doc "Gets the tmp path for the process."
   def get_files(pid), do: GenServer.call(pid, :files)
 
-  @doc """
-    Creates a temporary file in the current processes'
-    directory.
-  """
+  @doc "Creates a temporary file in the current processes' directory."
   def create_file(pid), do: GenServer.call(pid, :create_file)
 
+  # ----------
   # Server Callbacks
+  # ----------
 
   def init(args) do
     case mkdir(args) do
@@ -71,9 +63,6 @@ defmodule TempDir do
   defp cleanup(true, path), do: File.rm_rf(path)
   defp cleanup(false, _path), do: {:ok, []}
 
-  @compile {:inline, i: 1}
-  defp i(integer), do: Integer.to_string(integer)
-
   defp mkdir(args) do
     dir_prefix = args[:dir_prefix] || "elixir"
     tmp_dir = args[:tmp_dir] || "/tmp"
@@ -92,6 +81,9 @@ defmodule TempDir do
     File.open(file_path, [:write])
   end
 
+  @compile {:inline, i: 1}
+  defp i(integer), do: Integer.to_string(integer)
+
   defp gen_name do
     {_mega, sec, micro} = :os.timestamp
     scheduler_id = :erlang.system_info(:scheduler_id)
@@ -99,7 +91,5 @@ defmodule TempDir do
     i(sec) <> "-" <> i(micro) <> "-" <> i(scheduler_id)
   end
 
-  defp gen_path(prefix, tmp) do
-    tmp <> "/" <> prefix <> "-" <> gen_name()
-  end
+  defp gen_path(prefix, tmp), do: tmp <> "/" <> prefix <> "-" <> gen_name()
 end
